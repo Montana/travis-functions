@@ -11,14 +11,15 @@ node_load_version(){
 }
 
 node_publish_alpha(){
+  TAG=${1:-alpha}
   VERSION="$(node_load_version)"
   validate_env_variable "VERSION" "$FUNCNAME"
   validate_env_variable "NPM_TOKEN" "$FUNCNAME"
-  NEW_VERSION="$VERSION-alpha-$(date +%Y%m%d%H%M)"
+  NEW_VERSION="$VERSION-$TAG-$(date +%Y%m%d%H%M)"
   echo "Uploading npm package version $NEW_VERSION"
   cp travis/.npmrc $HOME/.npmrc
   npm version "$NEW_VERSION" --commit-hooks false --git-tag-version false
-  npm publish --tag alpha
+  npm publish --tag $TAG
 }
 
 node_push_github_pages(){
@@ -72,7 +73,7 @@ node_post_release(){
 }
 
 if [ "$1" == "node_publish_alpha" ];then
-    node_publish_alpha
+    node_publish_alpha $2
 fi
 
 if [ "$1" == "node_publish_release" ];then
